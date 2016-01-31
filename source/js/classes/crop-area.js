@@ -117,6 +117,7 @@ crop.factory('cropArea', ['cropCanvas', function(CropCanvas) {
         }
         subtractedNWY = 0;
         if (nw.y < 0) {
+            // prevent box from shrinking when hitting edge
             subtractedNWY = -nw.y;
             nw.y = 0;
         }
