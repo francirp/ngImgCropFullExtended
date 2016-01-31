@@ -115,26 +115,44 @@ crop.factory('cropArea', ['cropCanvas', function(CropCanvas) {
         if (nw.x < 0) {
             nw.x = 0;
         }
+        subtractedNWY = 0;
         if (nw.y < 0) {
+            subtractedNWY = -nw.y;
             nw.y = 0;
         }
 
         // check southeast corner
+        subtractedSEX = 0;
         if (se.x > canvasW) {
+            // prevent box from shrinking when hitting edge
+            subtractedSEX = se.x - canvasW;
             se.x = canvasW
         }
+
+        subtractedSEY = 0;
         if (se.y > canvasH) {
+            // prevent box from shrinking when hitting edge
+            subtractedSEY = se.y - canvasH;
             se.y = canvasH
         }
 
-        var newSizeWidth = (this._forceAspectRatio) ? size.w : se.x - nw.x,
-            newSizeHeight = (this._forceAspectRatio) ? size.h : se.y - nw.y;
+        var newSizeWidth = (this._forceAspectRatio) ? size.w : se.x - nw.x + subtractedSEX,
+            newSizeHeight = (this._forceAspectRatio) ? size.h : se.y - nw.y + subtractedNWY + subtractedSEY;
 
+        // need to make sure height does not exceed canvas
+        if (newSizeHeight > canvasH){
+            newSizeHeight = canvasH;
+        }
         // save rectangle scale
         if(this._aspect){
             newSizeWidth = newSizeHeight * this._aspect;
             if(nw.x+newSizeWidth>canvasW){
                 newSizeWidth=canvasW-nw.x;
+                if(subtractedNWY > 0 || subtractedSEY > 0){
+                    newSizeWidth=canvasW-nw.x;
+                } else {
+                    newSizeWidth=canvasW-nw.x+subtractedSEX;
+                }
                 newSizeHeight=newSizeWidth/this._aspect;
                 if(this._minSize.w>newSizeWidth) newSizeWidth=this._minSize.w;
                 if(this._minSize.h>newSizeHeight) newSizeHeight=this._minSize.h;
