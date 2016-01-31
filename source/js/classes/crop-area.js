@@ -149,7 +149,8 @@ crop.factory('cropArea', ['cropCanvas', function(CropCanvas) {
             newSizeWidth = newSizeHeight * this._aspect;
             if(nw.x+newSizeWidth>canvasW){
                 newSizeWidth=canvasW-nw.x;
-                if(subtractedNWY > 0 || subtractedSEY > 0){
+                if(subtractedNWY > 0){
+                    // don't want to expand vertical above top
                     newSizeWidth=canvasW-nw.x;
                 } else {
                     newSizeWidth=canvasW-nw.x+subtractedSEX;
